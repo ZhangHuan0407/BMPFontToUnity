@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace BMPFontToUnity
 {
@@ -8,12 +9,15 @@ namespace BMPFontToUnity
         /* const */
 
         /* field */
+        public static readonly Regex LineHelghtRegex = new Regex("(?<=lineHeight=)[0-9]+");
         private int m_LineHelght;
         public int LineHelght { get => m_LineHelght; }
 
+        public static readonly Regex BaseRegex = new Regex("(?<=base=)[0-9]+");
         private int m_Base;
         public int Base { get => m_Base; }
 
+        public static readonly Regex ScaleRegex = new Regex("(?<=scaleW=)[0-9]+ scaleH=[0-9]+");
         private VectorInt2 m_Scale;
         public VectorInt2 Scale { get => m_Scale; }
 

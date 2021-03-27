@@ -9,13 +9,13 @@ namespace BMPFontToUnity
     public class BMPFontPage : IComparable<BMPFontPage>
     {
         /* const */
-        public static readonly Regex PageIDRegex = new Regex("(?<=id=)[0-9]{1,}");
-        public static readonly Regex FilePathRegex = new Regex("(?<=file=\").\\w+(?=\")");
 
         /* field */
+        public static readonly Regex PageIDRegex = new Regex("(?<=id=)[0-9]+");
         private int m_ID;
         public int ID { get => m_ID; }
 
+        public static readonly Regex FilePathRegex = new Regex("(?<=file=\").\\w+(?=\")");
         public string FilePath { get; set; }
 
         /// <summary>

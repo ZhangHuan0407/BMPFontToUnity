@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BMPFontToUnity
+﻿namespace BMPFontToUnity
 {
     public struct VectorInt2
     {
@@ -11,7 +8,18 @@ namespace BMPFontToUnity
         /* func */
         public bool TryParse(string str, out VectorInt2 vector)
         {
-            throw new NotImplementedException();
+            vector = default;
+            if (string.IsNullOrEmpty(str))
+                return false;
+            string[] contents = str.Split(',');
+            if (contents.Length != 2)
+                return false;
+            if (!int.TryParse(contents[0], out int x)
+                || !int.TryParse(contents[1], out int y))
+                return false;
+            vector.X = x;
+            vector.Y = y;
+            return true;
         }
     }
 }
