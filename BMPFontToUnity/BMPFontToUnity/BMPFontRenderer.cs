@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.Linq;
 
 namespace BMPFontToUnity
 {
     public class BMPFontRenderer
     {
+        /* const */
+        public const int MaxCharPreLine = 20;
+
+        /* func */
         public static Bitmap RendererLine(BMPFont bMPFont, string str, in StringBuilder warning, Bitmap bitmap = null, int vernierY = 0)
         {
             if (warning is null)
@@ -53,6 +58,38 @@ namespace BMPFontToUnity
             bitmap = bitmap ?? new Bitmap(vernierX, bMPFont.Common.LineHelght);
             while (drawCall.Count > 0)
                 drawCall.Dequeue()(bitmap);
+            return bitmap;
+        }
+        public static Bitmap RendererLines(BMPFont bMPFont, string[] lines, in StringBuilder warning)
+        {
+            if (warning is null)
+                throw new ArgumentNullException(nameof(warning));
+            if (!bMPFont.HaveSetValue || bMPFont.HaveError)
+            {
+                warning.AppendLine("使用的字体存在问题，不可渲染");
+                return null;
+            }
+
+            List<string> buffer = new List<string>();
+            foreach (string rawLine in lines)
+            {
+                string lineBuffer = rawLine;
+                while (lineBuffer.Length > MaxCharPreLine)
+                {
+                    buffer.Add(lineBuffer.Substring(0, MaxCharPreLine));
+                    lineBuffer = lineBuffer.Substring(MaxCharPreLine);
+                }
+                buffer.Add(lineBuffer);
+            }
+            int maxCharCount = Enumerable.Max(buffer, (string str) => str.Length);
+            Bitmap bitmap = new Bitmap(maxCharCount * bMPFont.CharMaxWidth, buffer.Count * bMPFont.Common.LineHelght);
+
+            for (int lineIndex = 0; lineIndex < buffer.Count; lineIndex++)
+            {
+                RendererLine(
+                    bMPFont, buffer[lineIndex], warning, 
+                    bitmap, lineIndex * bMPFont.Common.LineHelght);
+            }
             return bitmap;
         }
         public static Color ColorPlusColor(Color back, Color font)
