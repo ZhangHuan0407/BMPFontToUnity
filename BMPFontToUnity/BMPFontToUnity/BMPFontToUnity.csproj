@@ -71,6 +71,7 @@
     <Compile Include="BMPFontCommon.cs" />
     <Compile Include="BMPFontInfo.cs" />
     <Compile Include="BMPFontPage.cs" />
+    <Compile Include="BMPFontRenderer.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

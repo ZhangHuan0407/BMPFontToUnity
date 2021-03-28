@@ -50,6 +50,7 @@ namespace BMPFontToUnity
         public bool HaveError { get; private set; }
 
         /* inter */
+        public override int GetHashCode() => ID;
 
         /* ctor */
         public BMPFontChar()
@@ -58,8 +59,6 @@ namespace BMPFontToUnity
         }
 
         /* func */
-        public override int GetHashCode() => ID;
-
         internal void SetStringValue(string line)
         {
             HaveError = true;
@@ -189,6 +188,23 @@ namespace BMPFontToUnity
 
 
             HaveError = false;
+        }
+
+        public Action<Bitmap> CreateDrawCall(int vernierX)
+        {
+            return (Bitmap bitmap) =>
+            {
+                for (int indexY = 0; indexY < Size.Y; indexY++)
+                    for (int indexX = 0; indexX < Size.X; indexX++)
+                    {
+                        Color fontColor = Colors[indexX, indexY];
+                        int bitmapIndexX = vernierX + indexX + Offset.X / 2;
+                        int bitmapIndexY = indexY + Offset.Y / 2;
+                        Color backColor = bitmap.GetPixel(bitmapIndexX, bitmapIndexY);
+                        Color resultColor = BMPFontRenderer.ColorPlusColor(backColor, fontColor);
+                        bitmap.SetPixel(bitmapIndexX, bitmapIndexY, resultColor);
+                    }
+            };
         }
     }
 }

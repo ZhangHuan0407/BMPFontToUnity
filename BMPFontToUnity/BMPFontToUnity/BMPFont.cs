@@ -17,6 +17,7 @@ namespace BMPFontToUnity
         public List<BMPFontPage> Pages { get; }
         public Dictionary<char, BMPFontChar> Chars { get; }
         public bool HaveSetValue { get; private set; }
+        public bool HaveError { get; private set; }
 
         /* inter */
 
@@ -28,6 +29,7 @@ namespace BMPFontToUnity
             Pages = new List<BMPFontPage>();
             Chars = new Dictionary<char, BMPFontChar>();
             HaveSetValue = false;
+            HaveError = false;
         }
 
         /* func */
@@ -55,6 +57,7 @@ namespace BMPFontToUnity
             else
                 HaveSetValue = true;
 
+            HaveError = true;
             int charCounts = 0;
 
             foreach (string line in lines)
@@ -101,14 +104,34 @@ namespace BMPFontToUnity
 
             if (charCounts != Chars.Count)
                 MessageBox.Show($"字符的数量与声明的数量不一致。");
+            HaveError = false;
+            HaveError = Info.HaveError || Common.HaveError;
+            foreach (BMPFontPage bMPFontPage in Pages)
+                HaveError |= bMPFontPage.HaveError;
+            foreach (BMPFontChar bMPFontChar in Chars.Values)
+                HaveError |= bMPFontChar.HaveError;
+            if (HaveError)
+            {
+                MessageBox.Show("读取字体配置时出现错误，停止读入");
+                return;
+            }
 
             Pages.Sort();
             foreach (BMPFontPage page in Pages)
                 page.LoadImage();
             foreach (BMPFontChar bmpFontChar in Chars.Values)
                 bmpFontChar.LoadSprite(this);
-
-            // check
+            HaveError = false;
+            HaveError = Info.HaveError || Common.HaveError;
+            foreach (BMPFontPage bMPFontPage in Pages)
+                HaveError |= bMPFontPage.HaveError;
+            foreach (BMPFontChar bMPFontChar in Chars.Values)
+                HaveError |= bMPFontChar.HaveError;
+            if (HaveError)
+            {
+                MessageBox.Show("加载字体配置时出现错误，停止读入");
+                return;
+            }
         }
 
         /* IDisposable */
