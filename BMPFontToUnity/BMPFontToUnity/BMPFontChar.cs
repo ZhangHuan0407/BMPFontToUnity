@@ -190,7 +190,7 @@ namespace BMPFontToUnity
             HaveError = false;
         }
 
-        public Action<Bitmap> CreateDrawCall(int vernierX)
+        public Action<Bitmap> CreateDrawCall(int vernierX, int vernierY)
         {
             return (Bitmap bitmap) =>
             {
@@ -199,7 +199,7 @@ namespace BMPFontToUnity
                     {
                         Color fontColor = Colors[indexX, indexY];
                         int bitmapIndexX = vernierX + indexX + Offset.X / 2;
-                        int bitmapIndexY = indexY + Offset.Y / 2;
+                        int bitmapIndexY = vernierY + indexY + Offset.Y / 2;
                         Color backColor = bitmap.GetPixel(bitmapIndexX, bitmapIndexY);
                         Color resultColor = BMPFontRenderer.ColorPlusColor(backColor, fontColor);
                         bitmap.SetPixel(bitmapIndexX, bitmapIndexY, resultColor);

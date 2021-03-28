@@ -7,7 +7,7 @@ namespace BMPFontToUnity
 {
     public class BMPFontRenderer
     {
-        public static Bitmap RendererLine(BMPFont bMPFont, string str, in StringBuilder warning)
+        public static Bitmap RendererLine(BMPFont bMPFont, string str, in StringBuilder warning, Bitmap bitmap = null, int vernierY = 0)
         {
             if (warning is null)
                 throw new ArgumentNullException(nameof(warning));
@@ -28,7 +28,7 @@ namespace BMPFontToUnity
             }
 
             // 计算渲染参数，并制定渲染操作
-            int vernierX = 0;
+            int vernierX = 10; // 左右各余 10 像素，避免垃圾 Offset 报错
             int lastCharExtraWidth = 0;
             Queue<Action<Bitmap>> drawCall = new Queue<Action<Bitmap>>();
             foreach (char @char in str)
@@ -41,15 +41,16 @@ namespace BMPFontToUnity
                     continue;
                 }
 
-                drawCall.Enqueue(targetChar.CreateDrawCall(vernierX));
+                drawCall.Enqueue(targetChar.CreateDrawCall(vernierX, vernierY));
                 vernierX += targetChar.XAdvance;
                 lastCharExtraWidth = targetChar.Size.X - targetChar.XAdvance + targetChar.Offset.X / 2;
             }
             if (lastCharExtraWidth > 0)
                 vernierX += lastCharExtraWidth;
+            vernierX += 10;
 
             // 执行渲染
-            Bitmap bitmap = new Bitmap(vernierX, bMPFont.Common.LineHelght);
+            bitmap = bitmap ?? new Bitmap(vernierX, bMPFont.Common.LineHelght);
             while (drawCall.Count > 0)
                 drawCall.Dequeue()(bitmap);
             return bitmap;

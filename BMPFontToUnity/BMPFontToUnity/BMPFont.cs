@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -16,6 +18,7 @@ namespace BMPFontToUnity
         public BMPFontCommon Common { get; private set; }
         public List<BMPFontPage> Pages { get; }
         public Dictionary<char, BMPFontChar> Chars { get; }
+        public int CharMaxWidth;
         public bool HaveSetValue { get; private set; }
         public bool HaveError { get; private set; }
 
@@ -119,8 +122,12 @@ namespace BMPFontToUnity
             Pages.Sort();
             foreach (BMPFontPage page in Pages)
                 page.LoadImage();
+            CharMaxWidth = 0;
             foreach (BMPFontChar bmpFontChar in Chars.Values)
+            {
+                CharMaxWidth = CharMaxWidth < bmpFontChar.Size.X ? bmpFontChar.Size.X : CharMaxWidth;
                 bmpFontChar.LoadSprite(this);
+            }
             HaveError = false;
             HaveError = Info.HaveError || Common.HaveError;
             foreach (BMPFontPage bMPFontPage in Pages)
@@ -132,6 +139,11 @@ namespace BMPFontToUnity
                 MessageBox.Show("加载字体配置时出现错误，停止读入");
                 return;
             }
+        }
+        
+        public Bitmap RedererLine(string line)
+        {
+            return BMPFontRenderer.RendererLine(this, line, new StringBuilder());
         }
 
         /* IDisposable */

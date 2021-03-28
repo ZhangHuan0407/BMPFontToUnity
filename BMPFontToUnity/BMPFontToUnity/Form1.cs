@@ -12,6 +12,10 @@ namespace BMPFontToUnity
 {
     public partial class Form1 : Form
     {
+        /* field */
+        BMPFont BMPFont;
+
+        /* ctor */
         public Form1()
         {
             InitializeComponent();
@@ -19,18 +23,32 @@ namespace BMPFontToUnity
 
         private void button1_Click(object sender, EventArgs e)
         {
-            BMPFont font = new BMPFont();
-            font.LoadFontFromFile("FL_fnt01.fnt");
+            BMPFont = new BMPFont();
+            BMPFont.LoadFontFromFile("FL_fnt01.fnt");
             //string json = JsonConvert.SerializeObject(font, Formatting.Indented);
             //File.WriteAllText("font.json", json);
             StringBuilder warning = new StringBuilder();
-            if (BMPFontRenderer.RendererLine(font, textBox1.Text, in warning) is Bitmap bitmap)
+            if (BMPFontRenderer.RendererLine(BMPFont, textBox1.Text, in warning) is Bitmap bitmap)
             {
                 pictureBox1.Image?.Dispose();
                 pictureBox1.Image = bitmap;
             }
             else
                 MessageBox.Show(warning.ToString());
+        }
+
+        private void CountdownToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!BMPFont.HaveSetValue || BMPFont.HaveError)
+                return;
+
+            CountdownForm countdownForm = new CountdownForm()
+            {
+                BMPFont = BMPFont,
+            };
+            countdownForm.ShowDialog();
+            countdownForm.Close();
+            countdownForm.Dispose();
         }
     }
 }
