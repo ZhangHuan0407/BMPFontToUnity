@@ -38,6 +38,7 @@ namespace BMPFontToUnity
             this.uerInputText = new System.Windows.Forms.TextBox();
             this.rendererTextButton = new System.Windows.Forms.Button();
             this.pictureBox = new System.Windows.Forms.PictureBox();
+            this.bmpFontDataText = new System.Windows.Forms.TextBox();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
@@ -54,32 +55,32 @@ namespace BMPFontToUnity
             this.menuStrip.TabIndex = 3;
             this.menuStrip.Text = "menuStrip1";
             // 
-            // 字体ToolStripMenuItem
+            // fontToolStripMenuItem
             // 
             this.fontToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loadFileToolStripMenuItem});
-            this.fontToolStripMenuItem.Name = "字体ToolStripMenuItem";
+            this.fontToolStripMenuItem.Name = "fontToolStripMenuItem";
             this.fontToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
             this.fontToolStripMenuItem.Text = "字体";
             // 
-            // 读自文件ToolStripMenuItem
+            // loadFileToolStripMenuItem
             // 
-            this.loadFileToolStripMenuItem.Name = "读自文件ToolStripMenuItem";
+            this.loadFileToolStripMenuItem.Name = "loadFileToolStripMenuItem";
             this.loadFileToolStripMenuItem.Size = new System.Drawing.Size(152, 26);
             this.loadFileToolStripMenuItem.Text = "读自文件";
             this.loadFileToolStripMenuItem.Click += new System.EventHandler(this.LoadFileToolStripMenuItem_Click);
             // 
-            // 测试ToolStripMenuItem
+            // testToolStripMenuItem
             // 
             this.testToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.countdownToolStripMenuItem});
-            this.testToolStripMenuItem.Name = "测试ToolStripMenuItem";
+            this.testToolStripMenuItem.Name = "testToolStripMenuItem";
             this.testToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
             this.testToolStripMenuItem.Text = "测试";
             // 
-            // 倒计时ToolStripMenuItem
+            // countdownToolStripMenuItem
             // 
-            this.countdownToolStripMenuItem.Name = "倒计时ToolStripMenuItem";
+            this.countdownToolStripMenuItem.Name = "countdownToolStripMenuItem";
             this.countdownToolStripMenuItem.Size = new System.Drawing.Size(137, 26);
             this.countdownToolStripMenuItem.Text = "倒计时";
             this.countdownToolStripMenuItem.Click += new System.EventHandler(this.CountdownToolStripMenuItem_Click);
@@ -115,11 +116,22 @@ namespace BMPFontToUnity
             this.pictureBox.TabIndex = 6;
             this.pictureBox.TabStop = false;
             // 
-            // Form1
+            // bmpFontDataText
+            // 
+            this.bmpFontDataText.Location = new System.Drawing.Point(12, 41);
+            this.bmpFontDataText.Multiline = true;
+            this.bmpFontDataText.Name = "bmpFontDataText";
+            this.bmpFontDataText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.bmpFontDataText.Size = new System.Drawing.Size(310, 428);
+            this.bmpFontDataText.TabIndex = 7;
+            this.bmpFontDataText.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.BmpFontDataText_KeyPress);
+            // 
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1243, 488);
+            this.Controls.Add(this.bmpFontDataText);
             this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.rendererTextButton);
             this.Controls.Add(this.uerInputText);
@@ -127,8 +139,8 @@ namespace BMPFontToUnity
             this.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.MainMenuStrip = this.menuStrip;
             this.Margin = new System.Windows.Forms.Padding(4);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "MainForm";
+            this.Text = "MainForm";
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
@@ -147,6 +159,7 @@ namespace BMPFontToUnity
         private System.Windows.Forms.TextBox uerInputText;
         private System.Windows.Forms.Button rendererTextButton;
         private System.Windows.Forms.PictureBox pictureBox;
+        private System.Windows.Forms.TextBox bmpFontDataText;
     }
 }
 

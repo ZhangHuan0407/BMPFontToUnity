@@ -44,6 +44,7 @@ namespace BMPFontToUnity
             BMPFont?.Dispose();
             BMPFont = new BMPFont();
             BMPFont.LoadFontFromFile(openFileDialog.FileName);
+            bmpFontDataText.Text = JsonConvert.SerializeObject(BMPFont, Formatting.Indented);
         }
 
         private void RendererTextButton_Click(object sender, EventArgs e)
@@ -62,6 +63,11 @@ namespace BMPFontToUnity
             }
             if (warning.Length > 0)
                 MessageBox.Show(warning.ToString());
+        }
+
+        private void BmpFontDataText_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = true;
         }
     }
 }
