@@ -69,6 +69,11 @@ namespace BMPFontToUnity
                 int.TryParse(scaleStr.Substring(index + " scaleH=".Length), out int scaleH);
                 m_Scale.Y = scaleH;
             }
+            else
+            {
+                MessageBox.Show("Common Scale Error");
+                return;
+            }
 
             HaveError = false;
         }

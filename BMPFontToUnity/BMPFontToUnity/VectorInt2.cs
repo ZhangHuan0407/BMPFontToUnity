@@ -6,7 +6,7 @@
         public int X, Y;
 
         /* func */
-        public bool TryParse(string str, out VectorInt2 vector)
+        public static bool TryParse(string str, out VectorInt2 vector)
         {
             vector = default;
             if (string.IsNullOrEmpty(str))

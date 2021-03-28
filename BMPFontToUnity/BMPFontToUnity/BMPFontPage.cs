@@ -74,9 +74,9 @@ namespace BMPFontToUnity
         internal void LoadImage()
         {
             HaveError = true;
-            if (File.Exists(FilePath))
+            if (!File.Exists(FilePath))
             {
-                MessageBox.Show("没有找到图片文件");
+                MessageBox.Show($"没有找到图片文件。\n{FilePath}");
                 return;
             }
             if (FilePath.Contains("/"))

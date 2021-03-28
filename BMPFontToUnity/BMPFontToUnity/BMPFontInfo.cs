@@ -39,12 +39,15 @@ namespace BMPFontToUnity
         private bool m_Smooth;
         public bool Smooth { get => m_Smooth; }
 
+        public static readonly Regex AARegex = new Regex("(?<=aa=)[01]");
         private bool m_AA;
         public bool AA { get => m_AA; }
 
+        public static readonly Regex PaddingRegex = new Regex("(?<=padding=)[0-9]+,[0-9]+,[0-9]+,[0-9]+");
         private VectorInt4 m_Padding;
         public VectorInt4 Padding { get => m_Padding; }
 
+        public static readonly Regex SpacingRegex = new Regex("(?<=spacing=)[0-9]+,[0-9]+");
         private VectorInt2 m_Spacing;
         public VectorInt2 Spacing { get => m_Spacing; }
 
@@ -104,7 +107,7 @@ namespace BMPFontToUnity
             else
                 m_Italic = italicValue > 0;
 
-            Match charSetMatch = FaceRegex.Match(line);
+            Match charSetMatch = CharSetRegex.Match(line);
             if (charSetMatch.Success)
                 CharSet = charSetMatch.Value;
             else
@@ -135,11 +138,31 @@ namespace BMPFontToUnity
             else
                 m_Smooth = smoothValue > 0;
 
-            // aa 
+            Match aaMatch = AARegex.Match(line);
+            if (!aaMatch.Success
+                || !int.TryParse(aaMatch.Value, out int aaValue))
+            {
+                MessageBox.Show("Info AA Error");
+                return;
+            }
+            else
+                m_AA = aaValue > 0;
 
-            // padding
+            Match paddingMatch = PaddingRegex.Match(line);
+            if (!paddingMatch.Success
+                || !VectorInt4.TryParse(paddingMatch.Value, out m_Padding))
+            {
+                MessageBox.Show("Info Padding Error");
+                return;
+            }
 
-            // spacing
+            Match spacingMatch = SpacingRegex.Match(line);
+            if (!spacingMatch.Success
+                || !VectorInt2.TryParse(spacingMatch.Value, out m_Spacing))
+            {
+                MessageBox.Show("Info Spacing Error");
+                return;
+            }
 
             HaveError = false;
         }

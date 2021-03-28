@@ -27,16 +27,19 @@ namespace BMPFontToUnity
         private VectorInt2 m_Offset;
         public VectorInt2 Offset { get => m_Offset; }
 
-        private VectorInt2 m_Advance;
-        public VectorInt2 Advance { get => m_Advance; }
+        public static readonly Regex XAdvanceRegex = new Regex("(?<=xadvance=)[0-9]+");
+        private int m_XAdvance;
+        public int XAdvance { get => m_XAdvance; }
 
         public static readonly Regex PageIndexRegex = new Regex("(?<=page=)[0-9]+");
         private int m_PageIndex;
         public int PageIndex { get => m_PageIndex; }
 
+        public static readonly Regex ChnlRegex = new Regex("(?<=chnl=)[0-9]");
         private bool m_Chnl;
         public bool Chnl { get => m_Chnl; }
 
+        public static readonly Regex LetterRegex = new Regex("(?<=letter=\").+(?=\")");
         public string Letter { get; set; }
 
         internal Color[,] Colors;
@@ -71,7 +74,94 @@ namespace BMPFontToUnity
                 return;
             }
 
+            Match positionMatch = PositionRegex.Match(line);
+            if (positionMatch.Success)
+            {
+                string positionStr = positionMatch.Value;
+                int index = positionStr.IndexOf(" y=");
+                int.TryParse(positionStr.Substring(0, index), out int positionX);
+                m_Position.X = positionX;
+                int.TryParse(positionStr.Substring(index + " y=".Length), out int positionY);
+                m_Position.Y = positionY;
+            }
+            else
+            {
+                MessageBox.Show("Char Position Error");
+                return;
+            }
 
+            Match sizeMatch = SizeRegex.Match(line);
+            if (sizeMatch.Success)
+            {
+                string sizeStr = sizeMatch.Value;
+                int index = sizeStr.IndexOf(" height=");
+                int.TryParse(sizeStr.Substring(0, index), out int weight);
+                m_Size.X = weight;
+                int.TryParse(sizeStr.Substring(index + " height=".Length), out int height);
+                m_Size.Y = height;
+            }
+            else
+            {
+                MessageBox.Show("Char Size Error");
+                return;
+            }
+            // 空白字符可以宽高为 0
+            if (Size.X < 0 || Size.Y < 0)
+            {
+                MessageBox.Show("Char Size Error");
+                return;
+            }
+
+            Match offsetMatch = OffsetRegex.Match(line);
+            if (offsetMatch.Success)
+            {
+                string offsetStr = offsetMatch.Value;
+                int index = offsetStr.IndexOf(" yoffset=");
+                int.TryParse(offsetStr.Substring(0, index), out int xOffset);
+                m_Offset.X = xOffset;
+                int.TryParse(offsetStr.Substring(index + " yoffset=".Length), out int yOffset);
+                m_Offset.Y = yOffset;
+            }
+            else
+            {
+                MessageBox.Show("Char Offset Error");
+                return;
+            }
+
+            Match xAdvanceMatch = XAdvanceRegex.Match(line);
+            if (!xAdvanceMatch.Success
+                || !int.TryParse(xAdvanceMatch.Value, out m_XAdvance))
+            {
+                MessageBox.Show("Char XAdvance Error");
+                return;
+            }
+
+            Match pageIndexMatch = PageIndexRegex.Match(line);
+            if (!pageIndexMatch.Success
+                || !int.TryParse(pageIndexMatch.Value, out m_PageIndex))
+            {
+                MessageBox.Show("Char PageIndex Error");
+                return;
+            }
+
+            Match chnlMatch = ChnlRegex.Match(line);
+            if (!chnlMatch.Success
+                || !int.TryParse(chnlMatch.Value, out int chnlValue))
+            {
+                MessageBox.Show("Char Chnl Error");
+                return;
+            }
+            else
+                m_Chnl = chnlValue > 0;
+
+            Match letterMatch = LetterRegex.Match(line);
+            if (letterMatch.Success)
+                Letter = letterMatch.Value;
+            else
+            {
+                MessageBox.Show("Char Letter Error");
+                return;
+            }
 
             HaveError = false;
         }
@@ -79,7 +169,24 @@ namespace BMPFontToUnity
         internal void LoadSprite(BMPFont bMPFont)
         {
             HaveError = true;
-            throw new NotImplementedException();
+
+            if (PageIndex < 0
+                || PageIndex >= bMPFont.Pages.Count)
+            {
+                MessageBox.Show($"Char PageIndex Error.\nPageIndex = {PageIndex}, Pages.Count = {bMPFont.Pages.Count}");
+                return;
+            }
+            BMPFontPage bMPFontPage = bMPFont.Pages[PageIndex];
+            if (bMPFontPage.HaveError)
+                return;
+
+            Colors = new Color[Size.X, Size.Y];
+            for (int indexY = 0; indexY < Size.Y; indexY++)
+                for (int indexX = 0; indexX < Size.X; indexX++)
+                {
+                    Colors[indexX, indexY] = bMPFontPage.PageImage.GetPixel(Position.X + indexX, Position.Y + indexY);
+                }
+
 
             HaveError = false;
         }
