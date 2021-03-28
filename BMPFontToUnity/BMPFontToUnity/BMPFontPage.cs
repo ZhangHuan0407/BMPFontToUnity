@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -15,13 +16,14 @@ namespace BMPFontToUnity
         private int m_ID;
         public int ID { get => m_ID; }
 
-        public static readonly Regex FilePathRegex = new Regex("(?<=file=\").\\w+(?=\")");
+        public static readonly Regex FilePathRegex = new Regex("(?<=file=\")\\w+\\.png(?=\")");
         public string FilePath { get; set; }
 
         /// <summary>
         /// 存在错误，无法使用
         /// </summary>
         public bool HaveError { get; private set; }
+        internal Bitmap PageImage;
 
         /* inter */
 
@@ -36,15 +38,14 @@ namespace BMPFontToUnity
 
         internal void SetStringValue(string line)
         {
+            HaveError = true;
             if (string.IsNullOrWhiteSpace(line))
                 throw new ArgumentException($"“{nameof(line)}”不能为 null 或空白。", nameof(line));
 
-            HaveError = false;
             Match pageIDMatch = PageIDRegex.Match(line);
             if (!pageIDMatch.Success
                 || !int.TryParse(pageIDMatch.Value, out m_ID))
             {
-                HaveError = true;
                 MessageBox.Show("Page ID Error");
                 return;
             }
@@ -54,10 +55,11 @@ namespace BMPFontToUnity
                 FilePath = filePathMatch.Value;
             else
             {
-                HaveError = true;
                 MessageBox.Show("Page File Error");
                 return;
             }
+
+            HaveError = false;
         }
 
         /* IComparable */
@@ -71,11 +73,20 @@ namespace BMPFontToUnity
 
         internal void LoadImage()
         {
+            HaveError = true;
             if (File.Exists(FilePath))
             {
                 MessageBox.Show("没有找到图片文件");
                 return;
             }
+            if (FilePath.Contains("/"))
+            {
+                MessageBox.Show("使用相对文件路径，而非绝对文件路径");
+                return;
+            }
+
+            PageImage = new Bitmap(FilePath);
+            HaveError = false;
         }
     }
 }

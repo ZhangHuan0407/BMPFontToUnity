@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace BMPFontToUnity
 {
@@ -29,6 +30,7 @@ namespace BMPFontToUnity
         private VectorInt2 m_Advance;
         public VectorInt2 Advance { get => m_Advance; }
 
+        public static readonly Regex PageIndexRegex = new Regex("(?<=page=)[0-9]+");
         private int m_PageIndex;
         public int PageIndex { get => m_PageIndex; }
 
@@ -57,17 +59,29 @@ namespace BMPFontToUnity
 
         internal void SetStringValue(string line)
         {
+            HaveError = true;
             if (string.IsNullOrWhiteSpace(line))
                 throw new ArgumentException($"“{nameof(line)}”不能为 null 或空白。", nameof(line));
 
+            Match charIDMatch = CharIDRegex.Match(line);
+            if (!charIDMatch.Success
+                || !int.TryParse(charIDMatch.Value, out m_ID))
+            {
+                MessageBox.Show("Page ID Error");
+                return;
+            }
+
+
+
             HaveError = false;
-
-
         }
 
         internal void LoadSprite(BMPFont bMPFont)
         {
+            HaveError = true;
             throw new NotImplementedException();
+
+            HaveError = false;
         }
     }
 }

@@ -6,14 +6,14 @@ using System.Windows.Forms;
 
 namespace BMPFontToUnity
 {
-    public class BMPFont
+    public class BMPFont : IDisposable
     {
         /* const */
         public static readonly Regex CharsCountRegex = new Regex("(?<=count=)[0-9]{1,}");
 
         /* field */
-        public BMPFontInfo Info { get; }
-        public BMPFontCommon Common { get; }
+        public BMPFontInfo Info { get; private set; }
+        public BMPFontCommon Common { get; private set; }
         public List<BMPFontPage> Pages { get; }
         public Dictionary<char, BMPFontChar> Chars { get; }
         public bool HaveSetValue { get; private set; }
@@ -109,6 +109,22 @@ namespace BMPFontToUnity
                 bmpFontChar.LoadSprite(this);
 
             // check
+        }
+
+        /* IDisposable */
+        public void Dispose()
+        {
+            if (Info != null)
+                Info = null;
+            if (Common != null)
+                Common = null;
+            foreach (BMPFontPage bMPFontPage in Pages)
+            {
+                bMPFontPage.PageImage?.Dispose();
+                bMPFontPage.PageImage = null;
+            }
+            foreach (BMPFontChar bMPFontChar in Chars.Values)
+                bMPFontChar.Colors = null;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace BMPFontToUnity
 {
@@ -38,12 +39,38 @@ namespace BMPFontToUnity
 
         internal void SetStringValue(string line)
         {
+            HaveError = true;
             if (string.IsNullOrWhiteSpace(line))
                 throw new ArgumentException($"“{nameof(line)}”不能为 null 或空白。", nameof(line));
 
+            Match lineHeightMatch = LineHelghtRegex.Match(line);
+            if (!lineHeightMatch.Success
+                || !int.TryParse(lineHeightMatch.Value, out m_LineHelght))
+            {
+                MessageBox.Show("Common LineHeight Error");
+                return;
+            }
+
+            Match baseMatch = BaseRegex.Match(line);
+            if (!baseMatch.Success
+                || !int.TryParse(baseMatch.Value, out m_Base))
+            {
+                MessageBox.Show("Common Base Error");
+                return;
+            }
+
+            Match scaleMatch = ScaleRegex.Match(line);
+            if (scaleMatch.Success)
+            {
+                string scaleStr = scaleMatch.Value;
+                int index = scaleStr.IndexOf(" scaleH=");
+                int.TryParse(scaleStr.Substring(0, index), out int scaleW);
+                m_Scale.X = scaleW;
+                int.TryParse(scaleStr.Substring(index + " scaleH=".Length), out int scaleH);
+                m_Scale.Y = scaleH;
+            }
+
             HaveError = false;
-
-
         }
 
         /* func */
