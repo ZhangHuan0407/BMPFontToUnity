@@ -14,15 +14,28 @@ namespace BMPFontToUnity
         public static readonly Regex CharsCountRegex = new Regex("(?<=count=)[0-9]{1,}");
 
         /* field */
+        /// <summary>
+        /// BMP 字体 Info 行具有的信息
+        /// </summary>
         public BMPFontInfo Info { get; private set; }
+        /// <summary>
+        /// BMP 字体 Common 行具有的信息
+        /// </summary>
         public BMPFontCommon Common { get; private set; }
         public List<BMPFontPage> Pages { get; }
         public Dictionary<char, BMPFontChar> Chars { get; }
+        /// <summary>
+        /// 最宽字符，额外空白行宽，以防止索引越界。这并不是有效的处理方法，但是最简单的处理方法。
+        /// </summary>
         public int CharMaxWidth;
         public bool HaveSetValue { get; private set; }
         public bool HaveError { get; private set; }
 
         /* inter */
+        /// <summary>
+        /// 额外空白行高，以防止索引越界。这并不是有效的处理方法，但是最简单的处理方法。
+        /// </summary>
+        public int ExtraLineHeight => (int)(Common.LineHelght * 0.2f > 10f ? Common.LineHelght * 0.2f : 10f);
 
         /* ctor */
         public BMPFont()
@@ -36,6 +49,10 @@ namespace BMPFontToUnity
         }
 
         /* func */
+        /// <summary>
+        /// 从目标配置文件读取字体配置
+        /// </summary>
+        /// <param name="filePath">文件路径</param>
         public void LoadFontFromFile(string filePath)
         {
             if (string.IsNullOrWhiteSpace(filePath))

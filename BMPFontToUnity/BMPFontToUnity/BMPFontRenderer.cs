@@ -33,7 +33,7 @@ namespace BMPFontToUnity
             }
 
             // 计算渲染参数，并制定渲染操作
-            int vernierX = 10; // 左右各余 10 像素，避免垃圾 Offset 报错
+            int vernierX = 0;
             int lastCharExtraWidth = 0;
             Queue<Action<Bitmap>> drawCall = new Queue<Action<Bitmap>>();
             foreach (char @char in str)
@@ -48,14 +48,15 @@ namespace BMPFontToUnity
 
                 drawCall.Enqueue(targetChar.CreateDrawCall(vernierX, vernierY));
                 vernierX += targetChar.XAdvance;
-                lastCharExtraWidth = targetChar.Size.X - targetChar.XAdvance + targetChar.Offset.X / 2;
+                lastCharExtraWidth = targetChar.Size.X - targetChar.XAdvance + targetChar.Offset.X;
             }
             if (lastCharExtraWidth > 0)
                 vernierX += lastCharExtraWidth;
-            vernierX += 10;
 
             // 执行渲染
-            bitmap = bitmap ?? new Bitmap(vernierX, bMPFont.Common.LineHelght);
+            bitmap = bitmap ?? new Bitmap(
+                vernierX, 
+                bMPFont.Common.LineHelght + bMPFont.ExtraLineHeight);
             while (drawCall.Count > 0)
                 drawCall.Dequeue()(bitmap);
             return bitmap;
@@ -82,7 +83,9 @@ namespace BMPFontToUnity
                 buffer.Add(lineBuffer);
             }
             int maxCharCount = Enumerable.Max(buffer, (string str) => str.Length);
-            Bitmap bitmap = new Bitmap(maxCharCount * bMPFont.CharMaxWidth, buffer.Count * bMPFont.Common.LineHelght);
+            Bitmap bitmap = new Bitmap(
+                (maxCharCount + 1) * bMPFont.CharMaxWidth,
+                buffer.Count * bMPFont.Common.LineHelght + bMPFont.ExtraLineHeight);
 
             for (int lineIndex = 0; lineIndex < buffer.Count; lineIndex++)
             {
@@ -94,6 +97,9 @@ namespace BMPFontToUnity
         }
         public static Color ColorPlusColor(Color back, Color font)
         {
+            if (font.A == 0)
+                return back;
+
             float backAlpha = back.A / 255f;
             float backRed = back.R / 255f;
             float backGreen = back.G / 255f;
